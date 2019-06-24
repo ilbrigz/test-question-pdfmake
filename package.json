@@ -1,6 +1,6 @@
 {
   "name": "pdfmake-test",
-  "homepage": "https://ilbrigz.github.io/pdf-test",
+  "homepage": "https://ilbrigz.github.io/pdftest",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
