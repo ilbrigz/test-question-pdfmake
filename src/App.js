@@ -66,7 +66,13 @@ const App = () => {
   const addItem = () => {
     setQuestions([
       ...questions,
-      { question, a: optionA, b: optionB, c: optionC, d: optionD }
+      {
+        question: question.toString().trim(),
+        a: optionA.toString().trim(),
+        b: optionB.toString().trim(),
+        c: optionC.toString().trim(),
+        d: optionD.toString().trim()
+      }
     ]);
     setQuestion("");
     setOptionA("");
@@ -102,12 +108,12 @@ const App = () => {
               value={title}
               type="text"
               onChange={e => {
-                setTitle(e.target.value.trim());
+                setTitle(e.target.value);
                 e.target.value = "";
               }}
               onKeyDown={e => {
                 if (e.key === "Enter") {
-                  setTitleFinal(e.target.value.trim());
+                  setTitleFinal(e.target.value);
                   e.target.value = "";
                   firstInput.current.focus();
                 }
@@ -123,7 +129,7 @@ const App = () => {
           ref={firstInput}
           value={question}
           onChange={e => {
-            setQuestion(e.target.value.trim());
+            setQuestion(e.target.value);
             e.target.value = "";
           }}
         />
@@ -132,7 +138,7 @@ const App = () => {
           value={optionA}
           type="text"
           onChange={e => {
-            setOptionA(e.target.value.trim());
+            setOptionA(e.target.value);
             e.target.value = "";
           }}
         />
@@ -141,7 +147,7 @@ const App = () => {
           type="text"
           value={optionB}
           onChange={e => {
-            setOptionB(e.target.value.trim());
+            setOptionB(e.target.value);
             e.target.value = "";
           }}
         />
@@ -150,7 +156,7 @@ const App = () => {
           type="text"
           value={optionC}
           onChange={e => {
-            setOptionC(e.target.value.trim());
+            setOptionC(e.target.value);
             e.target.value = "";
           }}
         />
@@ -159,7 +165,7 @@ const App = () => {
           value={optionD}
           type="text"
           onChange={e => {
-            setOptionD(e.target.value.trim());
+            setOptionD(e.target.value);
             e.target.value = "";
           }}
         />
