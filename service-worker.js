@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/test-question-pdfmake/precache-manifest.c361c612745c0bd4e552bb1f05980fc4.js"
+  "/test-question-pdfmake/precache-manifest.4547fa9b65d7e5af1cf183e4be3a266b.js"
 );
 
 self.addEventListener('message', (event) => {
