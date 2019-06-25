@@ -1,21 +1,35 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./App.css";
+import { Formik, ErrorMessage, Field, Form } from "formik";
+import * as Yup from "yup";
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
+const questionSchema = Yup.object().shape({
+  question: Yup.string().required("Queston required"),
+  optionA: Yup.string()
+    .trim()
+    .required("Option A is required"),
+  optionB: Yup.string()
+    .trim()
+
+    .required("Option B is required"),
+  optionC: Yup.string()
+    .trim()
+
+    .required("Option C is required"),
+  optionD: Yup.string()
+    .trim()
+
+    .required("Option D is required")
+});
 
 const App = () => {
   const [title, setTitle] = useState("");
   const [titleFinal, setTitleFinal] = useState("");
   const [url, setUrl] = useState("");
-  const [question, setQuestion] = useState("");
+  const [questionRef, setQuestionRef] = useState("");
   const [questions, setQuestions] = useState([]);
-  const [optionA, setOptionA] = useState("");
-  const [optionB, setOptionB] = useState("");
-  const [optionC, setOptionC] = useState("");
-  const [optionD, setOptionD] = useState("");
-
-  const firstInput = useRef(0);
   useEffect(() => {
     const pdfDefinition = {
       defaultStyle: {
@@ -43,18 +57,18 @@ const App = () => {
             columns: [
               {
                 width: "*",
-                text: `a. ${item.a}`
+                text: `a. ${item.optionA}`
               },
-              { width: "*", text: `c. ${item.b}` }
+              { width: "*", text: `c. ${item.optionB}` }
             ]
           },
           {
             columns: [
               {
                 width: "*",
-                text: `b. ${item.c}`
+                text: `b. ${item.optionC}`
               },
-              { width: "*", text: `d. ${item.d}` }
+              { width: "*", text: `d. ${item.optionD}` }
             ]
           }
         ])
@@ -63,113 +77,113 @@ const App = () => {
     const pdf = pdfMake.createPdf(pdfDefinition);
     pdf.getDataUrl(url => setUrl(url));
   }, [questions, titleFinal]);
-  const addItem = () => {
-    setQuestions([
-      ...questions,
-      {
-        question: question.toString().trim(),
-        a: optionA.toString().trim(),
-        b: optionB.toString().trim(),
-        c: optionC.toString().trim(),
-        d: optionD.toString().trim()
-      }
-    ]);
-    setQuestion("");
-    setOptionA("");
-    setOptionB("");
-    setOptionC("");
-    setOptionD("");
-  };
 
   return (
     <div
       style={{
-        display: "flex",
         flexDirection: "row",
-        height: "100vh"
+        height: "100vh",
+        display: "flex"
       }}
+      id="container"
     >
-      <div
-        id="container"
-        style={{
-          width: "40%",
-          display: "flex",
-          flexDirection: "column",
-          padding: "3rem"
-        }}
-      >
-        <p>Write Your Test Questions</p>
-        {!titleFinal ? (
-          <>
-            <label htmlFor="">
-              Direction: ( Type and Press enter to set Direction. )
-            </label>
-            <input
-              value={title}
-              type="text"
-              onChange={e => {
-                setTitle(e.target.value);
-                e.target.value = "";
-              }}
-              onKeyDown={e => {
-                if (e.key === "Enter") {
-                  setTitleFinal(e.target.value);
-                  e.target.value = "";
-                  firstInput.current.focus();
-                }
-              }}
-            />
-          </>
-        ) : (
-          <h3 style={{ marginLeft: "5px" }}>{titleFinal}</h3>
-        )}
+      <div style={{ padding: "3rem", width: "40%" }}>
+        <Formik
+          initialValues={{
+            question: "",
+            optionA: "",
+            optionB: "",
+            optionC: "",
+            optionD: ""
+          }}
+          onSubmit={(values, { setSubmitting, resetForm }) => {
+            resetForm();
+            questionRef.focus();
+            setQuestions([...questions, values]);
+          }}
+          validationSchema={questionSchema}
+        >
+          {({
+            values,
+            touched,
+            errors,
+            dirty,
+            isSubmitting,
+            handleChange,
+            handleBlur,
 
-        <label htmlFor="">Question:</label>
-        <textarea
-          ref={firstInput}
-          value={question}
-          onChange={e => {
-            setQuestion(e.target.value);
-            e.target.value = "";
+            handleReset
+          }) => {
+            return (
+              <>
+                <p>Write Your Test Questions</p>
+                {!titleFinal ? (
+                  <>
+                    <label htmlFor="">
+                      Direction: ( Type and Press enter to set Direction. )
+                    </label>
+                    <input
+                      value={title}
+                      type="text"
+                      onChange={e => {
+                        setTitle(e.target.value);
+                        e.target.value = "";
+                      }}
+                      onKeyDown={e => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          setTitleFinal(e.target.value);
+                          e.target.value = "";
+                          questionRef.focus();
+                        }
+                      }}
+                    />
+                  </>
+                ) : (
+                  <h3 style={{ marginLeft: "5px" }}>{titleFinal}</h3>
+                )}
+
+                <Form style={{ display: "flex", flexDirection: "column" }}>
+                  <label htmlFor="">Question:</label>
+                  <Field
+                    type="text"
+                    name="question"
+                    innerRef={el => {
+                      setQuestionRef(el);
+                    }}
+                  />
+                  <ErrorMessage name="question">
+                    {msg => <div className="error">{msg}</div>}
+                  </ErrorMessage>
+                  <label htmlFor="">Option a:</label>
+
+                  <Field type="text" name="optionA" />
+                  <ErrorMessage name="optionA">
+                    {msg => <div className="error">{msg}</div>}
+                  </ErrorMessage>
+                  <label htmlFor="">Option b:</label>
+
+                  <Field type="text" name="optionB" />
+                  <ErrorMessage name="optionB">
+                    {msg => <div className="error">{msg}</div>}
+                  </ErrorMessage>
+                  <label htmlFor="">Option c:</label>
+                  <Field type="text" name="optionC" />
+                  <ErrorMessage name="optionC">
+                    {msg => <div className="error">{msg}</div>}
+                  </ErrorMessage>
+                  <label htmlFor="">Option d:</label>
+                  <Field type="text" name="optionD" />
+
+                  <ErrorMessage name="optionD">
+                    {msg => <div className="error">{msg}</div>}
+                  </ErrorMessage>
+                  <button type="submit">Add Question</button>
+                </Form>
+              </>
+            );
           }}
-        />
-        <label htmlFor="">Option a:</label>
-        <input
-          value={optionA}
-          type="text"
-          onChange={e => {
-            setOptionA(e.target.value);
-            e.target.value = "";
-          }}
-        />
-        <label htmlFor="">Option b:</label>
-        <input
-          type="text"
-          value={optionB}
-          onChange={e => {
-            setOptionB(e.target.value);
-            e.target.value = "";
-          }}
-        />
-        <label htmlFor="">Option c:</label>
-        <input
-          type="text"
-          value={optionC}
-          onChange={e => {
-            setOptionC(e.target.value);
-            e.target.value = "";
-          }}
-        />
-        <label htmlFor="">Option d:</label>
-        <input
-          value={optionD}
-          type="text"
-          onChange={e => {
-            setOptionD(e.target.value);
-            e.target.value = "";
-          }}
-        />
-        <button onClick={addItem}>Add Question</button>
+        </Formik>
       </div>
       <div style={{ width: "100%", height: "100%" }}>
         <iframe

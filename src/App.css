@@ -15,3 +15,6 @@ button {
   padding: 1rem;
   width: 30%;
 }
+.error {
+  color: red;
+}
